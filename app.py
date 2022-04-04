@@ -5,6 +5,7 @@ from microservice1 import Guess
 from words import *
 from fastapi import FastAPI
 from pydantic import BaseModel, BaseSettings
+from uuid import uuid4
 
 words5 = get_word_list()
 words_db = get_database(words5)
@@ -36,10 +37,11 @@ db: List[Guess] = [
     )
 ]
 
-@app.get("/")
-async def fetch_users():
+@app.get("/db")
+async def fetch_guesses():
     return db
 
-@app.post("/")
+@app.post("/db")
 async def register_guess(guess: Guess):
     db.append(guess)
+    return {"id": guess.id}
