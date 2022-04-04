@@ -28,16 +28,12 @@ def get_word_list():
             word_ID += 1
     return five_letter_words
 
-
 def make_database(words5):
-    connection = sqlite3.connect("words.db")
+    connection = sqlite3.connect("word.db")
     cursor = connection.cursor()
     cursor.execute("CREATE TABLE words (word, number PRIMARY KEY)")
     cursor.executemany("INSERT INTO words VALUES(?, ?)", words5)
-    for row in cursor.execute("SELECT * FROM words"):
-        print(str(row).replace('u\'', '\''))
-#    connection.close()
+    return cursor
 
-if __name__ == '__main__':
-    words5 = get_word_list()
-    make_database(words5)
+
+
