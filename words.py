@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 import sqlite3
 import re
 
@@ -34,10 +34,12 @@ def make_database(words5):
     cursor = connection.cursor()
     cursor.execute("CREATE TABLE words (word, number PRIMARY KEY)")
     cursor.executemany("INSERT INTO words VALUES(?, ?)", words5)
-    for row in cursor.execute("SELECT * FROM words"):
+    for row in cursor.execute("SELECT word FROM words"):
         print(str(row).replace('u\'', '\''))
-#    connection.close()
 
+    connection.commit()
+    connection.close()
+    
 if __name__ == '__main__':
     words5 = get_word_list()
     make_database(words5)

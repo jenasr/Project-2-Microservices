@@ -1,9 +1,34 @@
-#! /usr/bin/env python
-from fastapi import FastAPI
+#! /usr/bin/env python3
+import collections
+import contextlib
+import logging.config
+import sqlite3
+import typing
+from fastapi import FastAPI, Depends, Response, HTTPException, status
+from pydantic import BaseModel, BaseSettings
+from enum import Enum
+
+connection = sqlite3.connect("words.db")
+cursor = connection.cursor()
+
+
+def get_db():
+    with contextlib.closing(sqlite3.connect("words.db", check_same_thread=False)) as db:
+        db.row_factory = sqlite3.Row
+        yield db
+
 
 app = FastAPI()
 
 
-@app.get("/")
-def root():
-    return {"message": "Hello World"}
+@app.get("/words/{letters}")
+async def valid_word(letters: str, response: Response, db: sqlite3.Connection = Depends(get_db)):
+    cur = db.execute("SELECT word FROM words WHERE word = ?", [letters])
+    looking_for = cur.fetchall()
+    # fetchall returns a list
+    if not looking_for:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Word not found"
+        )
+        # if not (empty list)  = true
+    return {"word": looking_for[0][0]}
