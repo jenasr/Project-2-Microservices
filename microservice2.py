@@ -29,6 +29,7 @@ if guess == wordleOfDay:
     print("Guess is correct!")
     #If the guess is incorrect, the response should identify the letters that are:
 else:
+  # single out each v, letter is index
     for letter, v in enumerate(guess):
         found = 0
             #in the word and in the correct spot,
@@ -37,6 +38,7 @@ else:
             print("Letter is Green: " + v)
             #in the word but in the wrong spot, and
         else:
+          # single out each v, char is index
             for char in wordleOfDay:
                 #print(char)
                 if char == guess[letter]:
