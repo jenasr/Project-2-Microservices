@@ -8,8 +8,8 @@ from fastapi import FastAPI, Depends, Response, HTTPException, status
 from pydantic import BaseModel, BaseSettings
 from enum import Enum
 
-connection = sqlite3.connect("words.db")
-cursor = connection.cursor()
+# connection = sqlite3.connect("words.db")
+# cursor = connection.cursor()
 
 
 def get_db():
@@ -32,3 +32,30 @@ async def valid_word(letters: str, response: Response, db: sqlite3.Connection = 
         )
         # if not (empty list)  = true
     return {"word": looking_for[0][0]}
+
+@app.post("/words/{letters}")
+async def valid_word(letters: str, response: Response, db: sqlite3.Connection = Depends(get_db)):
+    # Make sure word is not in database
+    cur = db.execute("SELECT word FROM words WHERE word = ?", [letters])
+    looking_for = cur.fetchall()
+    # fetchall returns a list
+    if looking_for:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Word already exists"
+        )
+
+    db.execute("INSERT INTO words VALUES(?)", [letters])
+    db.commit()
+
+@app.delete("/words/{letters}")
+async def valid_word(letters: str, response: Response, db: sqlite3.Connection = Depends(get_db)):
+    # Make sure word is not in database
+    cur = db.execute("SELECT word FROM words WHERE word = ?", [letters])
+    looking_for = cur.fetchall()
+    # fetchall returns a list
+    if not looking_for:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Word not found"
+        )
+    db.execute("DELETE FROM words WHERE word = ?", [letters])
+    db.commit()
