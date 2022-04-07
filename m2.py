@@ -21,9 +21,9 @@ def get_db():
         db.row_factory = sqlite3.Row
         yield db
 
-# settings = Settings()
+
 app = FastAPI()
-logging.config.fileConfig(settings.logging_config)
+
 
 @app.get("/games/{answer_id}")
 async def check_guess(answer_id: int, guess: str, response: Response, db: sqlite3.Connection = Depends(get_db)):

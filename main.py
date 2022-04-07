@@ -17,9 +17,8 @@ def get_db():
         db.row_factory = sqlite3.Row
         yield db
 
-settings = Settings()
 app = FastAPI()
-logging.config.fileConfig(settings.logging_config)
+
 
 @app.get("/words/{letters}")
 async def valid_word(letters: str, response: Response, db: sqlite3.Connection = Depends(get_db)):
