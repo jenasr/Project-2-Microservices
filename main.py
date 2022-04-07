@@ -46,7 +46,7 @@ async def add_guess(letters: str, response: Response, db: sqlite3.Connection = D
     #Check to make sure if its unique
     db.execute("INSERT INTO words VALUES(?)", [letters])
     db.commit()
-    return {"Successfully added": letters}
+    return {"details": f"successfully added {letters}"}
 
 @app.delete("/words/{letters}")
 async def delete_guess(letters: str, response: Response, db: sqlite3.Connection = Depends(get_db)):
@@ -62,4 +62,4 @@ async def delete_guess(letters: str, response: Response, db: sqlite3.Connection 
     # check return value of execute
     db.execute("DELETE FROM words WHERE word = ?", [letters])
     db.commit()
-    return {"Successfully removed": letters}
+    return {"details": f"successfully removed {letters}"}
