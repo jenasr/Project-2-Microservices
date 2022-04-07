@@ -6,7 +6,10 @@ if __name__ == '__main__':
     print("Checking")
     connection = sqlite3.connect("answers.db")
     cursor = connection.cursor()
-    for row in cursor.execute("SELECT game_answers FROM words"):
-        print(str(row).replace('u\'', '\''))
-    connection.commit()
+    cur = cursor.execute("SELECT game_answers FROM words")
+    output = cur.fetchall()
+
+    for row in output:
+        print(str(output).replace('u\'', '\''))
+
     connection.close()

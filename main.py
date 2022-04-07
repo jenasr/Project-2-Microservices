@@ -17,14 +17,10 @@ def get_db():
         db.row_factory = sqlite3.Row
         yield db
 
-
+settings = Settings()
 app = FastAPI()
-# Statelessness
-    # We should be able to change the answer of the day
-    # But we never save it, that is clients job
-# unifying the microservices: do we put them in the same file?
-# how do I pass multiple arguments to the endpoint
-# Posting if the word already exists, do just use primary key, since that is unique
+logging.config.fileConfig(settings.logging_config)
+
 @app.get("/words/{letters}")
 async def valid_word(letters: str, response: Response, db: sqlite3.Connection = Depends(get_db)):
     cur = db.execute("SELECT word FROM words WHERE word = ?", [letters])
