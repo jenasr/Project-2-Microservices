@@ -1,27 +1,25 @@
 #! /usr/bin/env python3
-import collections
+
+"""Microservice 1: Checking guesses from word list"""
+
 import contextlib
-import logging.config
 import sqlite3
-import typing
-from fastapi import FastAPI, Depends, Response, HTTPException, status
-from pydantic import BaseModel, BaseSettings
-from enum import Enum
+from fastapi import FastAPI, Depends, HTTPException, status
 
 # connection = sqlite3.connect("words.db")
 # cursor = connection.cursor()
 
-
 def get_db():
+    """Connect words.db"""
     with contextlib.closing(sqlite3.connect("words.db", check_same_thread=False)) as db:
         db.row_factory = sqlite3.Row
         yield db
 
 app = FastAPI()
 
-
 @app.get("/words/{letters}")
-async def valid_word(letters: str, response: Response, db: sqlite3.Connection = Depends(get_db)):
+async def valid_word(letters: str, db: sqlite3.Connection = Depends(get_db)):
+    """Check for valid word in word list"""
     cur = db.execute("SELECT word FROM words WHERE word = ?", [letters])
     looking_for = cur.fetchall()
     # fetchall returns a list
@@ -33,7 +31,8 @@ async def valid_word(letters: str, response: Response, db: sqlite3.Connection = 
     return {"word": looking_for[0][0]}
 
 @app.post("/words/{letters}")
-async def add_guess(letters: str, response: Response, db: sqlite3.Connection = Depends(get_db)):
+async def add_guess(letters: str, db: sqlite3.Connection = Depends(get_db)):
+    """Add possible guess to word list"""
     # Make sure word is not in database
     cur = db.execute("SELECT word FROM words WHERE word = ?", [letters])
     # its list
@@ -49,7 +48,8 @@ async def add_guess(letters: str, response: Response, db: sqlite3.Connection = D
     return {"details": "successfully added", "word": f"{letters}"}
 
 @app.delete("/words/{letters}")
-async def delete_guess(letters: str, response: Response, db: sqlite3.Connection = Depends(get_db)):
+async def delete_guess(letters: str, db: sqlite3.Connection = Depends(get_db)):
+    """Delete possible guess from word list"""
     # Make sure word is not in database
     cur = db.execute("SELECT word FROM words WHERE word = ?", [letters])
     looking_for = cur.fetchall()
