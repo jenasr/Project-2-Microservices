@@ -47,7 +47,7 @@ async def check_guess(answer_id: int, guess: str, response: Response, db: sqlite
                 if letter in wordleOfDay:
                     color = "Yellow"
             color_list.append(color)
-    return {f"{letter}": f"{color_list[index]}" for index, letter in enumerate(guess)}
+    return {"letter colors" : [f"{letter}: {color_list[index]}" for index, letter in enumerate(guess)]}
 
 
 
