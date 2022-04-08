@@ -46,7 +46,6 @@ async def check_guess(answer_id: int, guess: str, db: sqlite3.Connection = Depen
     return {"letter colors" : [f"{letter}: {color_list[index]}" for index, letter in enumerate(guess)]}
 
 
-
 @app.put("/games/")
 async def change_daily_word(game: Game, db: sqlite3.Connection = Depends(get_db)):
     """Change the word of a given game"""
@@ -55,6 +54,10 @@ async def change_daily_word(game: Game, db: sqlite3.Connection = Depends(get_db)
     if not looking_for:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Id not found"
+        )
+    if len(game.word) != 5:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Word not length 5"
         )
     db.execute("Update games SET game_answers = ? WHERE answer_id = ?", [game.word, game.game_id])
     db.commit()
