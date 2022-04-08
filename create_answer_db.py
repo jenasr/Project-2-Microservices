@@ -26,8 +26,8 @@ def get_database(list1):
     connection = sqlite3.connect("answers.db")
     cursor = connection.cursor()
     if not file_exists:
-        cursor.execute("CREATE TABLE words (game_answers CHAR(5), answer_id INTEGER PRIMARY KEY)")
-        cursor.executemany("INSERT INTO words VALUES(?, NULL)", list1)
+        cursor.execute("CREATE TABLE games (game_answers CHAR(5), answer_id INTEGER PRIMARY KEY)")
+        cursor.executemany("INSERT INTO games VALUES(?, NULL)", list1)
         connection.commit()
     else:
         print("DB already made")
