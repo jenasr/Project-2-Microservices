@@ -17,9 +17,7 @@ def get_answers():
     all_answers = []
     answer_id = 1
     for i, answer in enumerate(data):
-        an_answer = (answer, answer_id)
-        all_answers.append(an_answer)
-        answer_id += 1
+        all_answers.append((answer,))
     return all_answers
 
 def get_database(list1):
@@ -28,14 +26,13 @@ def get_database(list1):
     connection = sqlite3.connect("answers.db")
     cursor = connection.cursor()
     if not file_exists:
-        cursor.execute("CREATE TABLE words (game_answers, answer_id PRIMARY KEY)")
-        cursor.executemany("INSERT INTO words VALUES(?, ?)", list1)
+        cursor.execute("CREATE TABLE words (game_answers CHAR(5), answer_id INTEGER PRIMARY KEY)")
+        cursor.executemany("INSERT INTO words VALUES(?, NULL)", list1)
         connection.commit()
     else:
         print("DB already made")
-    return cursor
+    connection.close()
 
 if __name__ == '__main__':
     wordle_answers = get_answers()
-    print(wordle_answers)
     get_database(wordle_answers)

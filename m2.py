@@ -62,10 +62,6 @@ async def change_daily_word(game: Game, response: Response, db: sqlite3.Connecti
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Id not found"
         )
-    if len(game.word) != 5:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Word not 5 letters"
-        )
     db.execute("Update words SET game_answers = ? WHERE answer_id = ?", [game.word, game.game_id])
     db.commit()
     return game

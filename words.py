@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 import sqlite3
 import re
-
+import os.path
 def get_word_list():
     all_words = []
     with open("/usr/share/dict/words", "r") as word_file:
@@ -30,14 +30,15 @@ def get_word_list():
 
 
 def make_database(words5):
+    file_exists = os.path.exists("words.db")
     connection = sqlite3.connect("words.db")
     cursor = connection.cursor()
-    cursor.execute("CREATE TABLE words (word PRIMARY KEY)")
-    cursor.executemany("INSERT INTO words VALUES(?)", words5)
-    for row in cursor.execute("SELECT word FROM words"):
-        print(str(row).replace('u\'', '\''))
-
-    connection.commit()
+    if not file_exists:
+        cursor.execute("CREATE TABLE words (word CHAR(5) PRIMARY KEY)")
+        cursor.executemany("INSERT INTO words VALUES(?)", words5)
+        connection.commit()
+    else:
+        print("DB already made")
     connection.close()
 
 if __name__ == '__main__':
